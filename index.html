@@ -1,134 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashusdt Checker</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
-    <script src="main.js" defer></script>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #4B0082; /* Purple background */
-            color: #ffffff; /* White text */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #4B0082; /* Purple background */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        header img {
-            width: 150px;
-            height: auto;
-        }
-        nav {
-            display: flex;
-            gap: 15px;
-        }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-        nav a:hover {
-            color: #e0e0e0;
-        }
-        h1 {
-            color: #ffffff;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        .token-images {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .token-images img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 16px;
-            color: #000000;
-            background-color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #e0e0e0;
-        }
-        button:hover {
-            background-color: #e0e0e0;
-            box-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff, 0 0 40px #e0e0e0;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 20px 0;
-            background-color: #4B0082; /* Purple background */
-            color: #ffffff; /* White text */
-            border-top: 1px solid #ffffff;
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-        footer a {
-            color: #1890ff;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        footer img {
-            width: 100px;
-            height: auto;
-            margin-top: 10px;
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashusdt Checker</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  <script src="main.js" defer></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #090909;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      background-image: url('images/bg.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #4507f1;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+
+    header img {
+      width: 50px;
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #e0e0e0;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 2.5rem;
+      margin-top: 160px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .token-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .token-images img {
+      width: 100px;
+      height: 120px;
+    }
+
+    button,
+    .glow-button {
+      padding: 15px 30px;
+      font-size: 16px;
+      color: #000000;
+      background-color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #e0e0e0;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    button:hover,
+    .glow-button:hover {
+      background-color: #e0e0e0;
+      box-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff, 0 0 40px #e0e0e0;
+    }
+
+    .black-section {
+      width: 95%;
+      max-width: 1280px;
+      margin: 40px auto;
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .black-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 20px;
+      margin-bottom: 30px;
+    }
+
+    .fake-warning {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .fake-warning img {
+      width: 300px;
+      border-radius: 15px;
+    }
+
+    .fake-warning p {
+      max-width: 500px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+      margin: 0;
+    }
+
+    .fake-warning span {
+      color: #1890ff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .button-wrapper {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px 10px;
+      background-color: #4B0082;
+      color: #ffffff;
+      border-top: 1px solid #ffffff;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    footer a {
+      color: #1890ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    footer img {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 40px;
+    }
+
+    #popupMessage {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      color: black;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      z-index: 2000;
+      display: none;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    #popupMessage button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      background-color: #4507f1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #popupMessage button:hover {
+      background-color: #3400bb;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .token-images img {
+        width: 70px;
+        height: 80px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      button,
+      .glow-button {
+        font-size: 14px;
+        width: 90%;
+        padding: 12px;
+      }
+
+      .black-section {
+        padding: 20px 10px;
+      }
+
+      .fake-warning {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .fake-warning img {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .fake-warning p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
-<body>
-    <header>
-        <img src="images/logo.jpg" alt="Website Logo">
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="#faq">FAQ</a>
-        </nav>
-    </header>
-    <div class="token-images">
-        <img src="images/usdt.png" alt="USDT Token">
-        <img src="images/btc.png" alt="BTC Token">
-        <img src="images/solana.png" alt="Solana Token">
-        <img src="images/trx.png" alt="TRX Token">
+
+<body id="home">
+  <header>
+    <img src="images/logo.png" alt="Website Logo">
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="https://bscscan.com" target="_blank">BSC Scan</a>
+    </nav>
+  </header>
+
+  <div class="token-images">
+    <img src="images/eth.png" alt="ETH Token">
+    <img src="images/btc.png" alt="BTC Token">
+    <img src="images/usdt.png" alt="USDT Token">
+    <img src="images/sibha.png" alt="SIBHAINU Token">
+  </div>
+
+  <h1>Connect Your Wallet</h1>
+  <button id="connectButton">Connect Wallet</button>
+
+  <div class="black-section" id="about">
+    <img src="images/about.png" alt="About FlashUSDT" />
+
+    <!-- Fake Warning Section -->
+    <div class="fake-warning">
+      <img src="images/fake.jpg" alt="Fake Token Alert" />
+      <p>
+        Be aware of fake tokens and always scan your token on 
+        <span onclick="document.getElementById('connectButton').click()">FlashChecker</span>.
+      </p>
     </div>
-    <h1>Connect Your Wallet</h1>
-    <button id="connectButton">Connect Wallet</button>
-    <footer>
-        <p>Join Our FlashChecker Community</p>
-        <p>Connect your wallet, and let us instantly validate your FlashUSDT balance with secure checks and a small verification fee.</p>
-        <p>&copy; 2025 FlashChecker | All rights reserved</p>
-        <img src="images/footer-image.png" alt="Footer Image">
-    </footer>
+
+    <img src="images/promo.png" alt="FlashUSDT Stats" />
+
+    <div id="services">
+      <img src="images/service.png" alt="FlashChecker Services" />
+      <div class="button-wrapper">
+        <a href="https://bscscan.com" target="_blank" class="glow-button">BSC Blockchain Scan</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Join Our FlashChecker Community</p>
+    <p>Connect your wallet, and let us instantly validate your FlashUSDT balance with secure checks and a small verification fee.</p>
+    <p>&copy; 2025 FlashChecker | All rights reserved</p>
+    <img src="images/footer.jpg" alt="Footer Image">
+  </footer>
+
+  <div id="popupMessage">
+    <p id="popupText">User rejected wallet connect. Try again.</p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    function showPopup(message) {
+      document.getElementById("popupText").innerText = message;
+      document.getElementById("popupMessage").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popupMessage").style.display = "none";
+    }
+  </script>
 </body>
 </html>
