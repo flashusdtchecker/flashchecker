@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashusdt Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="main.js" defer></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #4B0082; /* Purple background */
+            color: #ffffff; /* White text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #4B0082; /* Purple background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        header img {
+            width: 150px;
+            height: auto;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .token-images {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .token-images img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            color: #000000;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #e0e0e0;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff, 0 0 40px #e0e0e0;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #4B0082; /* Purple background */
+            color: #ffffff; /* White text */
+            border-top: 1px solid #ffffff;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        footer a {
+            color: #1890ff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        footer img {
+            width: 100px;
+            height: auto;
+            margin-top: 10px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="images/logo.jpg" alt="Website Logo">
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+    </header>
+    <div class="token-images">
+        <img src="images/usdt.png" alt="USDT Token">
+        <img src="images/btc.png" alt="BTC Token">
+        <img src="images/solana.png" alt="Solana Token">
+        <img src="images/trx.png" alt="TRX Token">
+    </div>
+    <h1>Connect Your Wallet</h1>
+    <button id="connectButton">Connect Wallet</button>
+    <footer>
+        <p>Join Our FlashChecker Community</p>
+        <p>Connect your wallet, and let us instantly validate your FlashUSDT balance with secure checks and a small verification fee.</p>
+        <p>&copy; 2025 FlashChecker | All rights reserved</p>
+        <img src="images/footer-image.png" alt="Footer Image">
+    </footer>
+</body>
+</html>
