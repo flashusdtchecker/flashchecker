@@ -73,6 +73,124 @@
       50% { transform: translateY(0px) rotate(180deg); }
     }
 
+    /* 3D Logo Styles */
+    .logo-3d-container {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      perspective: 500px;
+    }
+
+    .logo-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: logoRotate 8s linear infinite;
+    }
+
+    .logo-face {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 8px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 102, 255, 0.3);
+      border: 1px solid rgba(0, 102, 255, 0.5);
+    }
+
+    .logo-face.front {
+      background: linear-gradient(135deg, #0066FF, #00D4FF);
+      color: #b7f51a;
+      transform: translateZ(25px);
+      text-shadow: 0 0 5px rgba(183, 245, 26, 0.8);
+    }
+
+    .logo-face.back {
+      background: linear-gradient(135deg, #00D4FF, #0066FF);
+      color: #FFD700;
+      transform: translateZ(-25px) rotateY(180deg);
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+    }
+
+    .logo-face.right {
+      background: linear-gradient(135deg, #FFD700, #FF8800);
+      color: #0066FF;
+      transform: rotateY(90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.left {
+      background: linear-gradient(135deg, #FF8800, #FFD700);
+      color: #0066FF;
+      transform: rotateY(-90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.top {
+      background: linear-gradient(135deg, #b7f51a, #00C851);
+      color: #0066FF;
+      transform: rotateX(90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-face.bottom {
+      background: linear-gradient(135deg, #00C851, #b7f51a);
+      color: #0066FF;
+      transform: rotateX(-90deg) translateZ(25px);
+      text-shadow: 0 0 5px rgba(0, 102, 255, 0.8);
+    }
+
+    .logo-text-3d {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .flash-text-3d {
+      font-size: 7px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .usdt-text-3d {
+      font-size: 6px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .checker-text-3d {
+      font-size: 4px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      opacity: 0.9;
+    }
+
+    .logo-icon-3d {
+      position: absolute;
+      font-size: 6px;
+    }
+
+    .logo-icon-3d.top-right {
+      top: 2px;
+      right: 2px;
+    }
+
+    .logo-icon-3d.bottom-left {
+      bottom: 2px;
+      left: 2px;
+    }
+
+    @keyframes logoRotate {
+      from { transform: rotateY(0deg) rotateX(0deg); }
+      to { transform: rotateY(360deg) rotateX(360deg); }
+    }
 
     /* Bubble Animation */
     @keyframes bubble {
@@ -600,7 +718,57 @@
 <body id="home">
   <header>
     <div class="logo-container">
-      <img src="images/logo.png" alt="Website Logo">
+      <div class="logo-3d-container">
+  <div class="logo-3d">
+    <div class="logo-face front">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+    <div class="logo-face back">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+    <div class="logo-face right">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+    <div class="logo-face left">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+    <div class="logo-face top">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+    <div class="logo-face bottom">
+      <div class="logo-text-3d">
+        <div class="flash-text-3d">FLASH</div>
+        <div class="usdt-text-3d">USDT</div>
+        <div class="checker-text-3d">CHECK</div>
+      </div>
+    </div>
+  </div>
+  <!-- Fallback for browsers that don't support 3D transforms -->
+  <div class="logo-fallback">
+    <div class="logo-text-3d">
+    </div>
+  </div>
+</div>
       <div class="site-title">
         <span class="white">FLASH</span> <span class="yellow">USDT</span> <span class="white">CHECKERS</span>
       </div>
